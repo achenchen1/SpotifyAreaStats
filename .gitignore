@@ -1,1 +1,5 @@
-envs*
+envs/*
+!envs/requirements.txt
+*.swp
+__pycache__/*
+*.pyc
