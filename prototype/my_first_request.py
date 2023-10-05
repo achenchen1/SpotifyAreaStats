@@ -38,30 +38,20 @@ def get_artist(artist_url: str, access_token: str) -> Dict[str, str]:
     return response.json()
 
 
-print(
-    "Access token response: {}".format(
-        access_token_response := get_access_token(APP_CLIENT_ID, APP_CLIENT_SECRET)
-    ),
-    end="\n\n",
-)
+def get_me(user_url: str, access_token: str) -> Dict[str, str]:
+    response = requests.get(f"https://api.spotify.com/v1/me",
+                            headers={"Authorization": f"Bearer {access_token}"})
 
-access_token = access_token_response["access_token"]
-token_type = access_token_response["token_type"]
-expires_in = access_token_response["expires_in"]
+    response.raise_for_status()
 
-####################################
-# Strictly for printing visibility #
-####################################
-print(json.dumps(access_token_response, indent=4), end="\n\n")
+    return response.json()
 
-print(
-    "Artist response: {}".format(
-        artist_response := get_artist(TEST_ARTIST_ID, access_token)
-    ),
-    end="\n\n",
-)
 
-####################################
-# Strictly for printing visibility #
-####################################
-print(json.dumps(artist_response, indent=4), end="\n\n")
+def _utility_printer(json_response: Dict[str, str], function_name: str = "") -> None:
+    if function_name:
+        print(f"{function_name} response:")
+    print(json.dumps(json_response, indent=4))
+    # Pad with an extra two linebreaks for visibility
+    print("\n")
+
+
