@@ -3,3 +3,4 @@ envs/*
 *.swp
 __pycache__/*
 *.pyc
+*.sqlite3
