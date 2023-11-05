@@ -1,0 +1,4 @@
+CREATE TABLE Artists (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name VARCHAR(64)
+);
