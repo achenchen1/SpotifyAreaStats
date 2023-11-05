@@ -17,8 +17,10 @@ def attempt_c(x, T):
         result += 1 / (result + 1)
     return result
 
+
 def attempt_d(x, T):
-    return 1 / (10*ln(T)+1) * x**0.8
+    return 1 / (10 * ln(T) + 1) * x**0.8
+
 
 attempts = [attempt_b, attempt_d]
 
@@ -34,6 +36,8 @@ test_cases = [
     ("Mac Miller", 5, 10),
     ("ATCQ", 5, 10),
     ("ATCQ", 1, 1000),
+    ("Bach", 1, 3),
+    ("Brahms", 2, 3),
 ]
 
 
@@ -53,4 +57,8 @@ for algo in attempts:
 
     for i in results:
         results[i][1] /= normalization
-    print(*sorted(list(results.values()), key=lambda i: i[1], reverse=True), sep="\n", end="\n\n")
+    print(
+        *sorted(list(results.values()), key=lambda i: i[1], reverse=True),
+        sep="\n",
+        end="\n\n"
+    )
