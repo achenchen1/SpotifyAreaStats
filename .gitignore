@@ -5,3 +5,5 @@ __pycache__/*
 *.pyc
 *.sqlite3
 *egg-info
+**/dist/*.whl
+**/dist/*.tar.gz
