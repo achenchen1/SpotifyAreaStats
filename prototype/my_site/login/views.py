@@ -41,6 +41,7 @@ def login_redirect(request: HttpRequest) -> HttpResponse:
                 (
                     f"https://accounts.spotify.com/authorize"
                     f"?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}/login"
+                    f"&scope=user-read-recently-played"
                 )
             )
         else:
