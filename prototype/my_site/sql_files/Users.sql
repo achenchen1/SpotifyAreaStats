@@ -1,4 +1,0 @@
-CREATE TABLE Users (
-    id INTEGER NOT NULL PRIMARY KEY,
-    name VARCHAR(128)
-);

@@ -1,49 +1,45 @@
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import redirect
 
+import base64
+import json
 import os
+import requests
 
-"""
+from my_package.env_config import APP_CLIENT_ID, APP_CLIENT_SECRET, URI_DEFAULT
+
+
 # Sample from the getting-started examples
 def index(request):
     return HttpResponse("Hello, world. You're at the login index.")
-"""
 
 
-def log_all(request: HttpRequest) -> None:
-    info = {
-        "scheme": request.scheme,
-        "body": request.body,
-        "path": request.path,
-        "path_info": request.path_info,
-        "method": request.method,
-        "encoding": request.encoding,
-        "content_type": request.content_type,
-        "content_params": request.content_params,
-        "GET": request.GET,
-        "POST": request.POST,
-        "COOKIES": request.COOKIES,
-        "FILES": request.FILES,
-        "META": request.META,
-        "headers": request.headers,
-        "resolver_match": request.resolver_match,
-    }
-    for k, v in info.items():
-        print(f"{k}: {v}\n")
-
-
-def login_redirect(request: HttpRequest) -> HttpResponse:
-    client_id = os.environ.get("APP_CLIENT_ID")
-    redirect_uri = os.environ.get("URI_DEFAULT")
+def authenticate(request: HttpRequest) -> HttpResponse:
     if request.method == "GET":
-        if "authorized" in request.GET:
-            return redirect(
-                (
-                    f"https://accounts.spotify.com/authorize"
-                    f"?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}/login"
-                    f"&scope=user-read-recently-played"
-                )
+        return redirect(
+            (
+                f"https://accounts.spotify.com/authorize"
+                f"?client_id={APP_CLIENT_ID}&response_type=code&redirect_uri={URI_DEFAULT}/login/callback"
+                f"&scope=user-read-recently-played user-top-read"
             )
-        else:
-            log_all(request)
-            return HttpResponse("Nice test.")
+        )
+    else:
+        raise ValueError
+
+
+def callback(request: HttpRequest) -> HttpResponse:
+    response: requests.Response = requests.post(
+        "https://accounts.spotify.com/api/token",
+        headers={
+            "content-type": "application/x-www-form-urlencoded",
+            "Authorization": ("Basic " + base64.b64encode((APP_CLIENT_ID + ":" + APP_CLIENT_SECRET).encode()).decode('utf-8')),
+        },
+        data={
+            "code": request.GET["code"],
+            "redirect_uri": "http://localhost:8080/login/callback",
+            "grant_type": "authorization_code",
+        },
+    )
+
+    return HttpResponse(json.dumps(response.json(), indent=4))
+

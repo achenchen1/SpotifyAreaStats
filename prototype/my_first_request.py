@@ -10,6 +10,7 @@ APP_CLIENT_ID = os.environ.get("APP_CLIENT_ID")
 APP_CLIENT_SECRET = os.environ.get("APP_CLIENT_SECRET")
 TEST_ARTIST_ID = "0hEurMDQu99nJRq8pTxO14"
 
+
 def get_access_token(app_client_id: str, app_client_secret: str) -> Dict[str, str]:
     # The most basic access token
     #    response = requests.post(
@@ -22,15 +23,26 @@ def get_access_token(app_client_id: str, app_client_secret: str) -> Dict[str, st
     #        },
     #    )
     import base64
-    print("Basic " + base64.b64encode((APP_CLIENT_ID + ":" + APP_CLIENT_SECRET).encode()).decode('utf-8'))
+
+    print(
+        "Basic "
+        + base64.b64encode((APP_CLIENT_ID + ":" + APP_CLIENT_SECRET).encode()).decode(
+            "utf-8"
+        )
+    )
     response = requests.post(
         "https://accounts.spotify.com/api/token",
         headers={
             "content-type": "application/x-www-form-urlencoded",
-            "Authorization": ("Basic " + base64.b64encode((APP_CLIENT_ID + ":" + APP_CLIENT_SECRET).encode()).decode('utf-8')),
+            "Authorization": (
+                "Basic "
+                + base64.b64encode(
+                    (APP_CLIENT_ID + ":" + APP_CLIENT_SECRET).encode()
+                ).decode("utf-8")
+            ),
         },
         data={
-            "code": "", # Get code from using the authenticate endpoint on the Django server
+            "code": "",  # Get code from using the authenticate endpoint on the Django server
             "redirect_uri": "http://localhost:8080/login",
             "grant_type": "authorization_code",
         },
@@ -75,12 +87,14 @@ def _utility_printer(json_response: Dict[str, str], function_name: str = "") -> 
 # r = get_access_token(APP_CLIENT_ID, APP_CLIENT_SECRET)
 
 # print(r)
-# _utility_printer(r) 
+# _utility_printer(r)
+import time
+
 response = requests.get(
-   f"https://api.spotify.com/v1/me/player/recently-played",
-   headers={
-       "Authorization": f"Bearer "# Once the access token with the correct scope is received, pass here
-   },
+    f"https://api.spotify.com/v1/me/player/recently-played?limit=50&before={int(time.time()*1000)}",
+    headers={
+        "Authorization": f"Bearer "  # Add auth token here, obtained from login app flow
+    },
 )
 
 response.raise_for_status()
